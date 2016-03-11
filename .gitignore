@@ -1,3 +1,4 @@
 /Alopos.sdf
 /build/*.o
 /.vs
+/vars.cmd
