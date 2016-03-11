@@ -2,3 +2,5 @@
 /build/*.o
 /.vs
 /vars.cmd
+/*.opendb
+/trace-*

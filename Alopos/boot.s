@@ -31,7 +31,7 @@ _start:
 	movl $stack_top, %esp
 
 	# We are now ready to actually execute C code
-	call main_kernel
+	call Main_Kernel
 
 	# In case the function returns
 	cli # clear interrupt

@@ -13,3 +13,5 @@ REM grub-mkrescue -o iso/alopos.iso bin
 REM qemu-system-i386 -cdrom iso/alopos.iso
 
 qemu-system-i386 -kernel bin/alopos.bin
+
+pause
