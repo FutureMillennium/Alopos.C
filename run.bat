@@ -1,5 +1,8 @@
-call vars.cmd
+@call vars.cmd
 
-SET "PATH=%qemu%;%PATH%"
+@SET "PATH=%qemu%;%PATH%"
+
+@REM grub-mkrescue -o iso/alopos.iso bin
+@REM qemu-system-i386 -cdrom iso/alopos.iso
 
 qemu-system-i386 -kernel bin/alopos.bin

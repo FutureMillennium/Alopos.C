@@ -1,17 +1,14 @@
-call vars.cmd
+@call vars.cmd
 
-SET "PATH=%minGW%;%gcc%;%qemu%;%PATH%"
+@SET "PATH=%minGW%;%gcc%;%qemu%;%PATH%"
 
-i686-elf-as Alopos/boot.s -o build/boot.o
-i686-elf-gcc -c Alopos/kernel.c -o build/kernel.o -std=gnu99 -ffreestanding -O2 -Wall -Wextra
+@cd Alopos
+i686-elf-as boot.s -o ../build/boot.o
+i686-elf-gcc -c kernel.c -o ../build/kernel.o -std=gnu99 -ffreestanding -O2 -Wall -Wextra
+@cd ..
 
-cd build
+@cd build
 i686-elf-gcc -T linker.ld -o ../bin/alopos.bin -ffreestanding -O2 -nostdlib *.o -lgcc
-cd ..
+@cd ..
 
-REM grub-mkrescue -o iso/alopos.iso bin
-REM qemu-system-i386 -cdrom iso/alopos.iso
-
-qemu-system-i386 -kernel bin/alopos.bin
-
-pause
+@pause
