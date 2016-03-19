@@ -101,11 +101,49 @@ void PutChar_Terminal_VGA(char character) {
 	}
 }
 
-void Echo_Terminal_VGA(const char* text) {
-	Index index = 0;
-	while (text[index] != 0) {
-		PutChar_Terminal_VGA(text[index]);
-		index++;
+// Echo("Foo");
+// Echo("String: %s", "foo");
+// Echo("String: %s%", "foo", "\nAnd another: %s", "bar");
+void Echo_Terminal_VGA(const char* text, ...) {
+
+	char** args = (char **) &text;
+	char* arg = *args;
+
+	char c;
+
+	while ((c = *arg++) != 0) {
+		if (c == '%') {
+			c = *arg++;
+			char* tmp;
+
+			switch (c) {
+				case '%':
+					PutChar_Terminal_VGA(c);
+					break;
+
+				case 'i':
+				case 'x':
+					// TODO itoa
+					break;
+
+				case 's':
+					args++;
+					tmp = *args;
+
+				echoString:
+					while (*tmp)
+						PutChar_Terminal_VGA(*tmp++);
+					break;
+			}
+			tmp = arg;
+			if ((c = *tmp++) == '%') { // go to next string
+				args++;
+				arg = *args;
+			}
+
+		} else {
+			PutChar_Terminal_VGA(c);
+		}
 	}
 }
 
