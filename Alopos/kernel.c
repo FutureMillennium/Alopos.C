@@ -88,7 +88,8 @@ void PutChar_Terminal_VGA(char character) {
 		NewLine_Terminal_VGA();
 	} else {
 		EntryPut_Terminal_VGA(character, colorCurrentTerminal_VGA, colCurrentTerminal_VGA, rowCurrentTerminal_VGA);
-		if ((colCurrentTerminal_VGA++) == COLS_MAX_VGA) {
+		colCurrentTerminal_VGA++;
+		if (colCurrentTerminal_VGA == COLS_MAX_VGA) {
 			NewLine_Terminal_VGA();
 		}
 	}
@@ -258,7 +259,8 @@ void Main_Kernel(Byte4 magicNumber, Byte4 multibootInfoAddress) {
 
 		do {
 			EntryPut_Terminal_VGA(i, colorCurrentTerminal_VGA, colCurrentTerminal_VGA, rowCurrentTerminal_VGA);
-			if ((colCurrentTerminal_VGA++) == COLS_MAX_VGA) {
+			colCurrentTerminal_VGA++;
+			if (colCurrentTerminal_VGA == COLS_MAX_VGA) {
 				NewLine_Terminal_VGA();
 			}
 			i++;
@@ -281,8 +283,8 @@ void Main_Kernel(Byte4 magicNumber, Byte4 multibootInfoAddress) {
 	}
 
 	// variable sizes
-	Echo_Terminal_VGA("Variable sizes:\n"
-		"char: %i, int: %i, long: %i, Bool: %i, Byte: %i, Byte2: %i, Byte4: %i, Byte8: %i\n", sizeof(char), sizeof(int), sizeof(long), sizeof(Bool), sizeof(Byte), sizeof(Byte2), sizeof(Byte4), sizeof(Byte8));
+	Echo_Terminal_VGA("Variable sizes: "
+		"char: %i, short: %i, int: %i, long: %i, Bool: %i, Byte: %i, Byte2: %i, Byte4: %i, Byte8: %i\n", sizeof(char), sizeof(short), sizeof(int), sizeof(long), sizeof(Bool), sizeof(Byte), sizeof(Byte2), sizeof(Byte4), sizeof(Byte8));
 
 	/* Set multibootInfo to the address of the Multiboot information structure. */
 	multibootInfo = (MultibootInfoType *)multibootInfoAddress;
