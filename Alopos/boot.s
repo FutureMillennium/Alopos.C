@@ -30,7 +30,9 @@ _start:
 	# our stack (as it grows downwards).
 	movl $stack_top, %esp
 
-	# We are now ready to actually execute C code
+	pushl %ebx  # pointer to the Multiboot information structure
+	pushl %eax  # magic value
+
 	call Main_Kernel
 
 	# In case the function returns
