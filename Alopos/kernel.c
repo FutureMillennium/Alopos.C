@@ -196,6 +196,7 @@ void Init_Terminal_VGA() {
 
 	// TODO monochrome monitors at 0xB0000?
 	// TODO video address const
+	// TODO is it always 0xB8000?
 	bufferTerminal_VGA = (Byte2*)0xB8000;
 
 	for (Byte y = 0; y < ROWS_MAX_VGA; y++) {
@@ -205,16 +206,37 @@ void Init_Terminal_VGA() {
 	}
 }
 
-bool CHECK_FLAG(Byte4 flags, Byte bit) {
+static inline void OutByte_IO(Byte2 port, Byte val) {
+	asm volatile ("outb %0, %1" : : "a"(val), "Nd"(port));
+	/* There's an outb %al, $imm8  encoding, for compile-time constant port numbers that fit in 8b.  (N constraint).
+	* Wider immediate constants would be truncated at assemble-time (e.g. "i" constraint).
+	* The  outb  %al, %dx  encoding is the only option for all other cases.
+	* %1 expands to %dx because  port  is a uint16_t.  %w1 could be used if we had the port number a wider C type */
+}
+
+void CursorSet_Terminal_VGA(Index row, Index col) {
+	unsigned short position = (row * 80) + col;
+
+	// TODO get cursor port address from BIOS info?
+
+	// cursor LOW port to vga INDEX register
+	OutByte_IO(0x3D4, 0x0F);
+	OutByte_IO(0x3D5, (Byte)(position & 0xFF));
+	// cursor HIGH port to vga INDEX register
+	OutByte_IO(0x3D4, 0x0E);
+	OutByte_IO(0x3D5, (Byte)((position >> 8) & 0xFF));
+}
+
+Bool FlagCheck_MultibootInfo(Byte4 flags, Byte bit) {
 	return ((flags) & (1 << (bit)));
 }
 
 #if defined(__cplusplus)
 extern "C" // Use C linkage for main_kernel.
 #endif
-void Main_Kernel(Byte4 magic, Byte4 multibootInfo) {
+void Main_Kernel(Byte4 magicNumber, Byte4 multibootInfoAddress) {
 
-	multiboot_info_t* mbi;
+	MultibootInfoType* multibootInfo;
 
 	Init_Terminal_VGA();
 	
@@ -223,10 +245,10 @@ void Main_Kernel(Byte4 magic, Byte4 multibootInfo) {
 
 	ColorSet_Terminal_VGA(ColorMake_VGA(COLOR_LIGHT_GREY, COLOR_BLACK));
 
-	if (magic != MULTIBOOT_BOOTLOADER_MAGIC) {
-		Echo_Terminal_VGA("Not booted by multiboot: 0x%x\n", magic);
+	if (magicNumber != MULTIBOOT_BOOTLOADER_MAGIC) {
+		Echo_Terminal_VGA("Not booted by multiboot: 0x%x\n", magicNumber);
 	} else {
-		Echo_Terminal_VGA("Booted by multiboot: 0x%x\n", magic);
+		Echo_Terminal_VGA("Booted by multiboot: 0x%x\n", magicNumber);
 	}
 	
 	// test charset
@@ -243,6 +265,7 @@ void Main_Kernel(Byte4 magic, Byte4 multibootInfo) {
 		} while (i != 0);
 	}
 
+	// test VGA colours
 	Echo_Terminal_VGA("\nColours test:\n");
 
 	{
@@ -257,41 +280,42 @@ void Main_Kernel(Byte4 magic, Byte4 multibootInfo) {
 		}
 	}
 
+	// variable sizes
 	Echo_Terminal_VGA("Variable sizes:\n"
-		"char: %i, int: %i, long: %i, bool: %i, Byte: %i, Byte2: %i, Byte4: %i, Byte8: %i\n", sizeof(char), sizeof(int), sizeof(long), sizeof(bool), sizeof(Byte), sizeof(Byte2), sizeof(Byte4), sizeof(Byte8));
+		"char: %i, int: %i, long: %i, Bool: %i, Byte: %i, Byte2: %i, Byte4: %i, Byte8: %i\n", sizeof(char), sizeof(int), sizeof(long), sizeof(Bool), sizeof(Byte), sizeof(Byte2), sizeof(Byte4), sizeof(Byte8));
 
-	/* Set MBI to the address of the Multiboot information structure. */
-	mbi = (multiboot_info_t *)multibootInfo;
+	/* Set multibootInfo to the address of the Multiboot information structure. */
+	multibootInfo = (MultibootInfoType *)multibootInfoAddress;
 
 	/* Print out the flags. */
-	Echo_Terminal_VGA("flags = %b, ", (unsigned)mbi->flags);
+	Echo_Terminal_VGA("flags = %b, ", (unsigned)multibootInfo->flags);
 
 	/* Are mem_* valid? */
-	if (CHECK_FLAG(mbi->flags, 0))
+	if (FlagCheck_MultibootInfo(multibootInfo->flags, 0))
 		Echo_Terminal_VGA("mem_lower = %u KB, mem_upper = %u KB\n",
-			(unsigned)mbi->mem_lower, (unsigned)mbi->mem_upper);
+			(unsigned)multibootInfo->mem_lower, (unsigned)multibootInfo->mem_upper);
 
 	/* Is boot_device valid? */
-	if (CHECK_FLAG(mbi->flags, 1))
-		Echo_Terminal_VGA("boot_device = 0x%x, ", (unsigned)mbi->boot_device);
+	if (FlagCheck_MultibootInfo(multibootInfo->flags, 1))
+		Echo_Terminal_VGA("boot_device = 0x%x, ", (unsigned)multibootInfo->boot_device);
 
 	// boot loader name
-	if (CHECK_FLAG(mbi->flags, 9))
-		Echo_Terminal_VGA("bootloader = %s, ", (char *)mbi->boot_loader_name);
+	if (FlagCheck_MultibootInfo(multibootInfo->flags, 9))
+		Echo_Terminal_VGA("bootloader = %s, ", (char *)multibootInfo->boot_loader_name);
 
 	/* Is the command line passed? */
-	if (CHECK_FLAG(mbi->flags, 2))
-		Echo_Terminal_VGA("cmdline = %s\n", (char *)mbi->cmdline);
+	if (FlagCheck_MultibootInfo(multibootInfo->flags, 2))
+		Echo_Terminal_VGA("cmdline = %s\n", (char *)multibootInfo->cmdline);
 
 	/* Are mods_* valid? */
-	if (CHECK_FLAG(mbi->flags, 3)) {
-		multiboot_module_t *mod;
+	if (FlagCheck_MultibootInfo(multibootInfo->flags, 3)) {
+		MultibootModuleType *mod;
 		unsigned int i;
 
 		Echo_Terminal_VGA("mods_count = %i, mods_addr = 0x%x\n",
-			(int)mbi->mods_count, (int)mbi->mods_addr);
-		for (i = 0, mod = (multiboot_module_t *)mbi->mods_addr;
-		i < mbi->mods_count;
+			(int)multibootInfo->mods_count, (int)multibootInfo->mods_addr);
+		for (i = 0, mod = (MultibootModuleType *)multibootInfo->mods_addr;
+		i < multibootInfo->mods_count;
 			i++, mod++)
 			Echo_Terminal_VGA(" mod_start = 0x%x, mod_end = 0x%x, cmdline = %s\n",
 				(unsigned)mod->mod_start,
@@ -300,16 +324,16 @@ void Main_Kernel(Byte4 magic, Byte4 multibootInfo) {
 	}
 
 	/* Bits 4 and 5 are mutually exclusive! */
-	if (CHECK_FLAG(mbi->flags, 4) && CHECK_FLAG(mbi->flags, 5)) {
+	if (FlagCheck_MultibootInfo(multibootInfo->flags, 4) && FlagCheck_MultibootInfo(multibootInfo->flags, 5)) {
 		Echo_Terminal_VGA("Both bits 4 and 5 are set.\n");
 		// TODO error?
 	}
 
 	/* Is the symbol table of a.out valid? */
-	if (CHECK_FLAG(mbi->flags, 4)) {
-		multiboot_aout_symbol_table_t *multiboot_aout_sym = &(mbi->u.aout_sym);
+	if (FlagCheck_MultibootInfo(multibootInfo->flags, 4)) {
+		MultibootAoutSymbolTableType *multiboot_aout_sym = &(multibootInfo->u.aout_sym);
 
-		Echo_Terminal_VGA("multiboot_aout_symbol_table: tabsize = 0x%0x, "
+		Echo_Terminal_VGA("MultibootAoutSymbolTable: tabsize = 0x%0x, "
 			"strsize = 0x%x, addr = 0x%x\n",
 			(unsigned)multiboot_aout_sym->tabsize,
 			(unsigned)multiboot_aout_sym->strsize,
@@ -317,8 +341,8 @@ void Main_Kernel(Byte4 magic, Byte4 multibootInfo) {
 	}
 
 	/* Is the section header table of ELF valid? */
-	if (CHECK_FLAG(mbi->flags, 5)) {
-		multiboot_elf_section_header_table_t *multiboot_elf_sec = &(mbi->u.elf_sec);
+	if (FlagCheck_MultibootInfo(multibootInfo->flags, 5)) {
+		MultibootELFSymbolTableType *multiboot_elf_sec = &(multibootInfo->u.elf_sec);
 
 		Echo_Terminal_VGA("multiboot_elf_sec: num = %u, size = 0x%x,"
 			" addr = 0x%x, shndx = 0x%x\n",
@@ -327,23 +351,25 @@ void Main_Kernel(Byte4 magic, Byte4 multibootInfo) {
 	}
 
 	/* Are mmap_* valid? */
-	if (CHECK_FLAG(mbi->flags, 6)) {
-		multiboot_memory_map_t *mmap;
+	if (FlagCheck_MultibootInfo(multibootInfo->flags, 6)) {
+		MultibootMemoryMapEntryType *mmap;
 
-		Echo_Terminal_VGA("mmap_addr = 0x%x, mmap_length = 0x%x\n", (unsigned)mbi->mmap_addr, (unsigned)mbi->mmap_length);
+		Echo_Terminal_VGA("mmap_addr = 0x%x, mmap_length = 0x%x\n", (unsigned)multibootInfo->mmap_addr, (unsigned)multibootInfo->mmap_length);
 
-		for (mmap = (multiboot_memory_map_t *)mbi->mmap_addr;
-		(unsigned long)mmap < mbi->mmap_addr + mbi->mmap_length;
-			mmap = (multiboot_memory_map_t *)((unsigned long)mmap
+		for (mmap = (MultibootMemoryMapEntryType *)multibootInfo->mmap_addr;
+		(unsigned long)mmap < multibootInfo->mmap_addr + multibootInfo->mmap_length;
+			mmap = (MultibootMemoryMapEntryType *)((unsigned long)mmap
 				+ mmap->size + sizeof(mmap->size)))
 			Echo_Terminal_VGA("size = 0x%x, base_addr = 0x%x%x,"
 				" length = 0x%x%x, type = 0x%x\n",
 				(unsigned)mmap->size,
-				(Byte4)(mmap->addr >> 32),
-				(Byte4)(mmap->addr & 0xffffffff),
-				(Byte4)(mmap->len >> 32),
-				(Byte4)(mmap->len & 0xffffffff),
+				(Byte4)(mmap->base_addr >> 32),
+				(Byte4)(mmap->base_addr & 0xffffffff),
+				(Byte4)(mmap->length >> 32),
+				(Byte4)(mmap->length & 0xffffffff),
 				(unsigned)mmap->type);
 	}
+
+	CursorSet_Terminal_VGA(rowCurrentTerminal_VGA, colCurrentTerminal_VGA);
 
 }

@@ -2,16 +2,13 @@
 
 #ifndef __cplusplus
 
-#define bool	_Bool
 #define true	1
 #define false	0
+typedef _Bool Bool;
 
 #else // __cplusplus
 
-#define _Bool	bool
-#define bool	bool
-#define false	false
-#define true	true
+#define Bool	bool
 
 #endif /* __cplusplus */
 
@@ -33,63 +30,66 @@ typedef __SIZE_TYPE__ Index;
 
 // Multiboot info
 
-struct multiboot_aout_symbol_table {
+// bit 4
+struct MultibootAoutSymbolTable {
 	Byte4 tabsize;
 	Byte4 strsize;
 	Byte4 addr;
 	Byte4 reserved;
 };
-typedef struct multiboot_aout_symbol_table multiboot_aout_symbol_table_t;
+typedef struct MultibootAoutSymbolTable MultibootAoutSymbolTableType;
 
-struct multiboot_elf_section_header_table {
+// bit 5
+struct MultibootELFSymbolTable {
 	Byte4 num;
 	Byte4 size;
 	Byte4 addr;
 	Byte4 shndx;
 };
-typedef struct multiboot_elf_section_header_table multiboot_elf_section_header_table_t;
+typedef struct MultibootELFSymbolTable MultibootELFSymbolTableType;
 
-struct multiboot_info {
+struct MultibootInfo {
 	/* Multiboot info version number */
 	Byte4 flags;
 
-	/* Available memory from BIOS */
+	// bit 0 – available memory from BIOS
 	Byte4 mem_lower;
 	Byte4 mem_upper;
 
-	/* "root" partition */
+	// bit 1 – "root" partition
 	Byte4 boot_device;
 
-	/* Kernel command line */
+	// bit 2 – Kernel command line
 	Byte4 cmdline;
 
-	/* Boot-Module list */
+	// bit 3 – Boot-Module list
 	Byte4 mods_count;
 	Byte4 mods_addr;
 
+	// bit 4 or 5
 	union {
-		struct multiboot_aout_symbol_table aout_sym;
-		struct multiboot_elf_section_header_table elf_sec;
+		struct MultibootAoutSymbolTable aout_sym; // bit 4
+		struct MultibootELFSymbolTable elf_sec; // bit 5
 	} u;
 
-	/* Memory Mapping buffer */
+	// bit 6 – Memory Mapping buffer
 	Byte4 mmap_length;
 	Byte4 mmap_addr;
 
-	/* Drive Info buffer */
+	// bit 7 – Drive Info buffer
 	Byte4 drives_length;
 	Byte4 drives_addr;
 
-	/* ROM configuration table */
+	// bit 8 – ROM configuration table
 	Byte4 config_table;
 
-	/* Boot Loader Name */
+	// bit 9 – Boot Loader Name
 	Byte4 boot_loader_name;
 
-	/* APM table */
+	// bit 10 – APM (Advanced Power Management) table
 	Byte4 apm_table;
 
-	/* Video */
+	// bit 11 – VESA BIOS Extensions (VBE)
 	Byte4 vbe_control_info;
 	Byte4 vbe_mode_info;
 	Byte2 vbe_mode;
@@ -97,9 +97,10 @@ struct multiboot_info {
 	Byte2 vbe_interface_off;
 	Byte2 vbe_interface_len;
 };
-typedef struct multiboot_info multiboot_info_t;
+typedef struct MultibootInfo MultibootInfoType;
 
-struct multiboot_mod_list {
+// bit 3 – Boot-Module list
+struct MultibootModule {
 	/* the memory used goes from bytes 'mod_start' to 'mod_end-1' inclusive */
 	Byte4 mod_start;
 	Byte4 mod_end;
@@ -110,12 +111,13 @@ struct multiboot_mod_list {
 	/* padding to take it to 16 bytes (must be zero) */
 	Byte4 pad;
 };
-typedef struct multiboot_mod_list multiboot_module_t;
+typedef struct MultibootModule MultibootModuleType;
 
-struct multiboot_mmap_entry {
+// bit 6 – Memory Mapping
+struct MultibootMemoryMapEntry {
 	Byte4 size;
-	Byte8 addr;
-	Byte8 len;
+	Byte8 base_addr;
+	Byte8 length;
 	Byte4 type;
 } __attribute__((packed));
-typedef struct multiboot_mmap_entry multiboot_memory_map_t;
+typedef struct MultibootMemoryMapEntry MultibootMemoryMapEntryType;
