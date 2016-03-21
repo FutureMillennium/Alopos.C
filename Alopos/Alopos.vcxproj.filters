@@ -23,10 +23,28 @@
     <ClCompile Include="kernel.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="VGATextMode.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="StringFunctions.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="IO.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Multiboot.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Multiboot.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="VarDefs.h">
-      <Filter>Source Files</Filter>
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Global.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -75,9 +75,15 @@
     <None Include="boot.s" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="IO.c" />
     <ClCompile Include="kernel.c" />
+    <ClCompile Include="Multiboot.c" />
+    <ClCompile Include="StringFunctions.c" />
+    <ClCompile Include="VGATextMode.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Global.h" />
+    <ClInclude Include="Multiboot.h" />
     <ClInclude Include="VarDefs.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
