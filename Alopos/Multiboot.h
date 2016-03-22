@@ -101,9 +101,6 @@ struct MultibootMemoryMapEntry {
 	Byte8 base_addr;
 	Byte8 length;
 	Byte4 type;
-}
-#if defined(__GNUC__)
-__attribute__((packed))
-#endif
-;
+} __attribute__((packed));
+
 typedef struct MultibootMemoryMapEntry MultibootMemoryMapEntryType;

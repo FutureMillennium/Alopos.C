@@ -28,6 +28,7 @@ void Main_Kernel(Byte4 magicNumber, Byte4 multibootInfoAddress) {
 
 	MultibootInfoType* multibootInfo;
 
+	GDTInit();
 	Init_Terminal_VGA();
 	
 	ColorSet_Terminal_VGA(ColorMake_VGA(COLOR_WHITE, COLOR_BLACK));

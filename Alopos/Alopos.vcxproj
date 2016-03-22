@@ -82,6 +82,7 @@
     <ClCompile Include="VGATextMode.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="GDT.h" />
     <ClInclude Include="Global.h" />
     <ClInclude Include="Multiboot.h" />
     <ClInclude Include="VarDefs.h" />
