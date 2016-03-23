@@ -3,7 +3,17 @@
 
 #include "VarDefs.h"
 
-static inline void OutByte_IO(Byte2 port, Byte val) {
+inline Byte InByte_IO(Byte2 port) {
+	Byte ret;
+#if defined(__GNUC__)
+	asm volatile ("inb %1, %0"
+		: "=a"(ret)
+		: "Nd"(port));
+#endif
+	return ret;
+}
+
+inline void OutByte_IO(Byte2 port, Byte val) {
 #if defined(__GNUC__)
 	asm volatile ("outb %0, %1" : : "a"(val), "Nd"(port));
 #endif

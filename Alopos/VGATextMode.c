@@ -167,11 +167,11 @@ void Init_Terminal_VGA() {
 	// TODO is it always 0xB8000?
 	bufferTerminal_VGA = (Byte2*)0xB8000; // VGA text mode 3 video buffer address
 
-	for (Byte y = 0; y < ROWS_MAX_VGA; y++) {
+	/*for (Byte y = 0; y < ROWS_MAX_VGA; y++) {
 		for (Byte x = 0; x < COLS_MAX_VGA; x++) {
 			EntryPut_Terminal_VGA(0, colorCurrentTerminal_VGA, x, y);
 		}
-	}
+	}*/
 }
 
 void CursorSet_Terminal_VGA(Index row, Index col) {
@@ -185,4 +185,16 @@ void CursorSet_Terminal_VGA(Index row, Index col) {
 	// cursor HIGH port to vga INDEX register
 	OutByte_IO(0x3D4, 0x0E);
 	OutByte_IO(0x3D5, (Byte)((position >> 8) & 0xFF));
+}
+
+void GetCursorPosition_Terminal_VGA() {
+	Byte2 pos;
+
+	OutByte_IO(0x3d4, 0x0e);
+	pos = InByte_IO(0x3d5) << 8;
+	OutByte_IO(0x3d4, 0x0f);
+	pos |= InByte_IO(0x3d5);
+	
+	colCurrentTerminal_VGA = pos % COLS_MAX_VGA;
+	rowCurrentTerminal_VGA = pos / COLS_MAX_VGA;
 }
