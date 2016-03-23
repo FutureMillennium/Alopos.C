@@ -12,13 +12,12 @@
 
 #include "VarDefs.h"
 #include "Global.h"
-#include "Multiboot.h"
 
-
-#include "IO.c"
 #include "StringFunctions.c"
-#include "VGATextMode.c"
+#include "GDT.c"
 #include "Multiboot.c"
+#include "IO.c"
+#include "VGATextMode.c"
 
 
 #if defined(__cplusplus)
@@ -161,6 +160,11 @@ void Main_Kernel(Byte4 magicNumber, Byte4 multibootInfoAddress) {
 				(Byte4)(mmap->length & 0xffffffff),
 				(unsigned)mmap->type);
 	}
+
+	// GDT data test
+	/*for (Byte i = 0; i < 3; i++) {
+		Echo_Terminal_VGA("%i: gran %b %x, access %b %x\n", i, gdt.entries[i].granularity, gdt.entries[i].granularity, gdt.entries[i].access, gdt.entries[i].access);
+	}*/
 
 	CursorSet_Terminal_VGA(rowCurrentTerminal_VGA, colCurrentTerminal_VGA);
 

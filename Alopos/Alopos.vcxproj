@@ -75,6 +75,7 @@
     <None Include="boot.s" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="GDT.c" />
     <ClCompile Include="IO.c" />
     <ClCompile Include="kernel.c" />
     <ClCompile Include="Multiboot.c" />

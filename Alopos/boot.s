@@ -44,3 +44,21 @@ _start:
 # Set the size of the _start symbol to the current location '.' minus its start.
 # This is useful when debugging or when you implement call tracing.
 .size _start, . - _start
+
+# Load GDT
+.global GDTFlush
+.type GDTFlush, @function
+
+GDTFlush:
+    mov 4(%esp), %eax
+    lgdt (%eax)
+
+    mov $0x10, %ax  # 0x10 is entry[2]
+    mov %ax, %ds
+    mov %ax, %es
+    mov %ax, %fs
+    mov %ax, %ss
+
+    ljmp $0x08, $.flush  # 0x08 is entry[1]
+.flush:
+    ret
