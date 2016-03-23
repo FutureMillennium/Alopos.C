@@ -26,5 +26,10 @@ typedef struct {
 	GDTAddress address;
 } GDT;
 
+
+// ---------------------------------------------
+// function definitions
+// ---------------------------------------------
+
 extern void GDTFlush(Byte4);
 

@@ -31,13 +31,13 @@ _start:
 	movl $stack_top, %esp
 
 	pushl %ebx  # pointer to the Multiboot information structure
-	pushl %eax  # magic value
+	pushl %eax  # should contain the Multiboot bootloader magic number
 
 	call Main_Kernel
 
 	# In case the function returns
-	cli # clear interrupt
-	hlt # halt
+	cli  # clear interrupt
+	hlt  # halt
 .Lhang:
 	jmp .Lhang
 
@@ -50,7 +50,7 @@ _start:
 .type GDTFlush, @function
 
 GDTFlush:
-    mov 4(%esp), %eax
+    mov 4(%esp), %eax  # TODO: are 4 bytes staying in the stack?
     lgdt (%eax)
 
     mov $0x10, %ax  # 0x10 is entry[2]

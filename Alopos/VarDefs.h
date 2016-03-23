@@ -1,5 +1,5 @@
 #pragma once
-// Variable definitions
+// Variable type definitions
 
 // VS useless macro
 #if !defined(__GNUC__)

@@ -35,6 +35,9 @@ void Main_Kernel(Byte4 magicNumber, Byte4 multibootInfoAddress) {
 
 	ColorSet_Terminal_VGA(ColorMake_VGA(COLOR_LIGHT_GREY, COLOR_BLACK));
 
+
+	// Tests:
+
 	if (magicNumber != MULTIBOOT_BOOTLOADER_MAGIC) {
 		Echo_Terminal_VGA("Not booted by multiboot: 0x%x\n", magicNumber);
 	} else {
@@ -43,6 +46,7 @@ void Main_Kernel(Byte4 magicNumber, Byte4 multibootInfoAddress) {
 	
 	// test charset
 	Echo_Terminal_VGA("Charset test:\n");
+
 	{
 		char i = 0;
 
@@ -55,6 +59,7 @@ void Main_Kernel(Byte4 magicNumber, Byte4 multibootInfoAddress) {
 			i++;
 		} while (i != 0);
 	}
+
 
 	// test VGA colours
 	Echo_Terminal_VGA("\nColours test:\n");
@@ -71,9 +76,11 @@ void Main_Kernel(Byte4 magicNumber, Byte4 multibootInfoAddress) {
 		}
 	}
 
+
 	// variable sizes
 	Echo_Terminal_VGA("Variable sizes: "
 		"char: %i, short: %i, int: %i, long: %i, Bool: %i, Byte: %i, Byte2: %i, Byte4: %i, Byte8: %i\n", sizeof(char), sizeof(short), sizeof(int), sizeof(long), sizeof(Bool), sizeof(Byte), sizeof(Byte2), sizeof(Byte4), sizeof(Byte8));
+
 
 	/* Set multibootInfo to the address of the Multiboot information structure. */
 	multibootInfo = (MultibootInfoType *)multibootInfoAddress;
@@ -160,6 +167,7 @@ void Main_Kernel(Byte4 magicNumber, Byte4 multibootInfoAddress) {
 				(Byte4)(mmap->length & 0xffffffff),
 				(unsigned)mmap->type);
 	}
+
 
 	// GDT data test
 	/*for (Byte i = 0; i < 3; i++) {

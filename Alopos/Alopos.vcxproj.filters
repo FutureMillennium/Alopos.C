@@ -38,6 +38,9 @@
     <ClCompile Include="GDT.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="IDT.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Multiboot.h">
