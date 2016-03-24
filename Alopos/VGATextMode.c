@@ -7,8 +7,8 @@
 // constants
 // ---------------------------------------------
 
-static const Index COLS_MAX_VGA = 80;
-static const Index ROWS_MAX_VGA = 25;
+static const Index COLS_MAX_VGA = 80; // number of columns in VGA text mode 3
+static const Index ROWS_MAX_VGA = 25; // number of rows in VGA text mode 3
 
 
 // ---------------------------------------------
@@ -39,16 +39,17 @@ enum Color_VGA {
 // vars
 // ---------------------------------------------
 
-Index rowCurrentTerminal_VGA;
-Index colCurrentTerminal_VGA;
-Byte colorCurrentTerminal_VGA;
-volatile Byte2* bufferTerminal_VGA;
-Byte VGA_CursorStartRegister = 0xBF; // let's assume 10111111 is uninitiated
+Index rowCurrentTerminal_VGA; // cursor row
+Index colCurrentTerminal_VGA; // cursor column
+Byte colorCurrentTerminal_VGA; // current text colour
+volatile Byte2* bufferTerminal_VGA; // text video buffer
+Byte2 VGA_IOPort; // base IO port for video (VGA), usually 0x3D4
+Byte VGA_CursorStartRegister; // Cursor Start Register, bit 5 is CD, Cursor Disable
+
 
 // ---------------------------------------------
 // functions
 // ---------------------------------------------
-
 
 Byte ColorMake_VGA(enum Color_VGA foreground, enum Color_VGA background) {
 	return foreground | background << 4;
@@ -157,7 +158,12 @@ void Echo_Terminal_VGA(const char* text, ...) {
 }
 
 void Init_Terminal_VGA() {
+
 	colorCurrentTerminal_VGA = ColorMake_VGA(COLOR_LIGHT_GREY, COLOR_BLACK);
+	VGA_IOPort = *(Byte2*)0x0463; // TODO always at 0x0463?
+
+	OutByte_IO(VGA_IOPort, 0x0A); // Cursor Start Register, bit 5 is CD, Cursor Disable
+	VGA_CursorStartRegister = InByte_IO(VGA_IOPort + 1);
 
 	rowCurrentTerminal_VGA = 0;
 	colCurrentTerminal_VGA = 0;
@@ -180,46 +186,37 @@ void CursorSet_Terminal_VGA(Index row, Index col) {
 	// TODO get cursor port address from BIOS info?
 
 	// cursor LOW port to vga INDEX register
-	OutByte_IO(0x3D4, 0x0F);
-	OutByte_IO(0x3D5, (Byte)(position & 0xFF));
+	OutByte_IO(VGA_IOPort, 0x0F);
+	OutByte_IO(VGA_IOPort + 1, (Byte)(position & 0xFF));
 	// cursor HIGH port to vga INDEX register
-	OutByte_IO(0x3D4, 0x0E);
-	OutByte_IO(0x3D5, (Byte)((position >> 8) & 0xFF));
+	OutByte_IO(VGA_IOPort, 0x0E);
+	OutByte_IO(VGA_IOPort + 1, (Byte)((position >> 8) & 0xFF));
 }
 
 void GetCursorPosition_Terminal_VGA() {
 	Byte2 pos;
 
-	OutByte_IO(0x3d4, 0x0e);
-	pos = InByte_IO(0x3d5) << 8;
-	OutByte_IO(0x3d4, 0x0f);
-	pos |= InByte_IO(0x3d5);
+	OutByte_IO(VGA_IOPort, 0x0e);
+	pos = InByte_IO(VGA_IOPort + 1) << 8;
+	OutByte_IO(VGA_IOPort, 0x0f);
+	pos |= InByte_IO(VGA_IOPort + 1);
 	
 	colCurrentTerminal_VGA = pos % COLS_MAX_VGA;
 	rowCurrentTerminal_VGA = pos / COLS_MAX_VGA;
 }
 
 void CursorEnable_Terminal_VGA() {
-	if (VGA_CursorStartRegister == 0xBF) {
-		OutByte_IO(0x3d4, 0x0A); // Cursor Start Register, bit 5 is CD, Cursor Disable
-		VGA_CursorStartRegister = InByte_IO(0x3d5);
-	}
 
 	VGA_CursorStartRegister ^= VGA_CursorStartRegister & (1 << 5); // set bit 5, CD, Cursor Disable to 0
 	
-	OutByte_IO(0x3d4, 0x0A);
-	OutByte_IO(0x3d5, VGA_CursorStartRegister);
+	OutByte_IO(VGA_IOPort, 0x0A);
+	OutByte_IO(VGA_IOPort + 1, VGA_CursorStartRegister);
 }
 
 void CursorDisable_Terminal_VGA() {
 
-	if (VGA_CursorStartRegister == 0xBF) {
-		OutByte_IO(0x3d4, 0x0A); // Cursor Start Register, bit 5 is CD, Cursor Disable
-		VGA_CursorStartRegister = InByte_IO(0x3d5);
-	}
-
 	VGA_CursorStartRegister |= (1 << 5); // set bit 5, CD, Cursor Disable to 0
 
-	OutByte_IO(0x3d4, 0x0A);
-	OutByte_IO(0x3d5, VGA_CursorStartRegister);
+	OutByte_IO(VGA_IOPort, 0x0A);
+	OutByte_IO(VGA_IOPort + 1, VGA_CursorStartRegister);
 }

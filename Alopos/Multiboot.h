@@ -100,6 +100,6 @@ struct MultibootMemoryMapEntry {
 	Byte4 size;
 	Byte8 base_addr;
 	Byte8 length;
-	Byte4 type;
+	Byte4 type; // 1 = available, 2 = reserved
 } __attribute__((packed));
 typedef struct MultibootMemoryMapEntry MultibootMemoryMapEntryType;
