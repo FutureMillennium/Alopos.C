@@ -43,7 +43,7 @@ Index rowCurrentTerminal_VGA;
 Index colCurrentTerminal_VGA;
 Byte colorCurrentTerminal_VGA;
 volatile Byte2* bufferTerminal_VGA;
-
+Byte VGA_CursorStartRegister = 0xBF; // let's assume 10111111 is uninitiated
 
 // ---------------------------------------------
 // functions
@@ -197,4 +197,29 @@ void GetCursorPosition_Terminal_VGA() {
 	
 	colCurrentTerminal_VGA = pos % COLS_MAX_VGA;
 	rowCurrentTerminal_VGA = pos / COLS_MAX_VGA;
+}
+
+void CursorEnable_Terminal_VGA() {
+	if (VGA_CursorStartRegister == 0xBF) {
+		OutByte_IO(0x3d4, 0x0A); // Cursor Start Register, bit 5 is CD, Cursor Disable
+		VGA_CursorStartRegister = InByte_IO(0x3d5);
+	}
+
+	VGA_CursorStartRegister ^= VGA_CursorStartRegister & (1 << 5); // set bit 5, CD, Cursor Disable to 0
+	
+	OutByte_IO(0x3d4, 0x0A);
+	OutByte_IO(0x3d5, VGA_CursorStartRegister);
+}
+
+void CursorDisable_Terminal_VGA() {
+
+	if (VGA_CursorStartRegister == 0xBF) {
+		OutByte_IO(0x3d4, 0x0A); // Cursor Start Register, bit 5 is CD, Cursor Disable
+		VGA_CursorStartRegister = InByte_IO(0x3d5);
+	}
+
+	VGA_CursorStartRegister |= (1 << 5); // set bit 5, CD, Cursor Disable to 0
+
+	OutByte_IO(0x3d4, 0x0A);
+	OutByte_IO(0x3d5, VGA_CursorStartRegister);
 }

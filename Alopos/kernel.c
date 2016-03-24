@@ -175,6 +175,7 @@ void Main_Kernel(Byte4 magicNumber, Byte4 multibootInfoAddress) {
 		Echo_Terminal_VGA("%i: gran %b %x, access %b %x\n", i, gdt.entries[i].granularity, gdt.entries[i].granularity, gdt.entries[i].access, gdt.entries[i].access);
 	}*/
 
-	CursorSet_Terminal_VGA(rowCurrentTerminal_VGA, colCurrentTerminal_VGA);
+	//CursorSet_Terminal_VGA(rowCurrentTerminal_VGA, colCurrentTerminal_VGA);
+	CursorDisable_Terminal_VGA();
 
 }
