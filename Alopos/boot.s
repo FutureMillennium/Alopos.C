@@ -1,16 +1,16 @@
 # Declare constants used for creating a multiboot header.
-.set ALIGN,    1<<0             # align loaded modules on page boundaries
-.set MEMINFO,  1<<1             # provide memory map
-.set FLAGS,    ALIGN | MEMINFO  # this is the Multiboot 'flag' field
-.set MAGIC,    0x1BADB002       # 'magic number' lets bootloader find the header
-.set CHECKSUM, -(MAGIC + FLAGS) # checksum of above, to prove we are multiboot
+.set MULTIBOOT_ALIGN,    1<<0             # align loaded modules on page boundaries
+.set MULTIBOOT_MEMORY_INFO,  1<<1             # provide memory map
+.set MULTIBOOT_FLAGS,    MULTIBOOT_ALIGN | MULTIBOOT_MEMORY_INFO  # this is the Multiboot 'flag' field
+.set MULTIBOOT_MAGIC,    0x1BADB002       # 'magic number' lets bootloader find the header
+.set MULTIBOOT_CHECKSUM, -(MULTIBOOT_MAGIC + MULTIBOOT_FLAGS) # checksum of above, to prove we are multiboot
 
 # Declare a header as in the Multiboot Standard
 .section .multiboot
 .align 4
-.long MAGIC
-.long FLAGS
-.long CHECKSUM
+.long MULTIBOOT_MAGIC
+.long MULTIBOOT_FLAGS
+.long MULTIBOOT_CHECKSUM
 
 # stack pointer register (esp)
 .section .bootstrap_stack, "aw", @nobits
@@ -30,13 +30,14 @@ _start:
 	# our stack (as it grows downwards).
 	movl $stack_top, %esp
 
-	pushl %ebx  # pointer to the Multiboot information structure
+	pushl %ebx  # should contain a pointer to the Multiboot information structure
 	pushl %eax  # should contain the Multiboot bootloader magic number
 
 	call Main_Kernel
 
 	# In case the function returns
 	cli  # clear interrupt
+	# TODO kernel panic
 	hlt  # halt
 .Lhang:
 	jmp .Lhang
