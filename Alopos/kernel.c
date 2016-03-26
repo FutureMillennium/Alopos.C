@@ -13,11 +13,20 @@
 #include "VarDefs.h"
 #include "Global.h"
 
+#include "Memory.c"
 #include "StringFunctions.c"
 #include "GDT.c"
+#include "IDT.c"
 #include "Multiboot.c"
 #include "IO.c"
 #include "VGATextMode.c"
+
+
+inline void InterruptsEnable() {
+#if defined(__GNUC__)
+	asm volatile ("sti");
+#endif
+}
 
 
 #if defined(__cplusplus)
@@ -28,9 +37,17 @@ void Main_Kernel(Byte4 magicNumber, Byte4 multibootInfoAddress) {
 	MultibootInfoType* multibootInfo;
 
 	GDTInit();
+	IDTInit(); // interrupts, exceptions and IRQ
 	Init_Terminal_VGA();
+	InterruptsEnable();
+
 	GetCursorPosition_Terminal_VGA();
-	
+
+	/*{
+		Byte i = 0;
+		Echo_Terminal_VGA("%i: 0x%x %x = 0x%x 0x%x %b\n", i, idt.entries[i].offset_high, idt.entries[i].offset_low, (Byte4)ISRoutine0, idt.entries[i].selector, idt.entries[i].flags);
+	}*/
+
 	ColorSet_Terminal_VGA(ColorMake_VGA(COLOR_WHITE, COLOR_BLACK));
 	Echo_Terminal_VGA("\n%s v%i.%i\n", OS_NAME, OS_MAJOR_VERSION, OS_MINOR_VERSION);
 
@@ -76,9 +93,9 @@ void Main_Kernel(Byte4 magicNumber, Byte4 multibootInfoAddress) {
 			}
 		}
 	}
+	*/
 
-
-	// variable sizes
+	/*// variable sizes
 	Echo_Terminal_VGA("Variable sizes: "
 		"char: %i, short: %i, int: %i, long: %i, Bool: %i, Byte: %i, Byte2: %i, Byte4: %i, Byte8: %i\n", sizeof(char), sizeof(short), sizeof(int), sizeof(long), sizeof(Bool), sizeof(Byte), sizeof(Byte2), sizeof(Byte4), sizeof(Byte8));
 		*/

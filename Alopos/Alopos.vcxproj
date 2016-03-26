@@ -79,6 +79,7 @@
     <ClCompile Include="IDT.c" />
     <ClCompile Include="IO.c" />
     <ClCompile Include="kernel.c" />
+    <ClCompile Include="Memory.c" />
     <ClCompile Include="Multiboot.c" />
     <ClCompile Include="StringFunctions.c" />
     <ClCompile Include="VGATextMode.c" />
@@ -86,8 +87,11 @@
   <ItemGroup>
     <ClInclude Include="GDT.h" />
     <ClInclude Include="Global.h" />
+    <ClInclude Include="IO.h" />
+    <ClInclude Include="Memory.h" />
     <ClInclude Include="Multiboot.h" />
     <ClInclude Include="VarDefs.h" />
+    <ClInclude Include="VGATextMode.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
