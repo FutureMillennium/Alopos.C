@@ -75,6 +75,7 @@
     <None Include="boot.s" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CommandLine.c" />
     <ClCompile Include="GDT.c" />
     <ClCompile Include="IDT.c" />
     <ClCompile Include="IO.c" />
@@ -86,6 +87,7 @@
     <ClCompile Include="VGATextMode.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CommandLine.h" />
     <ClInclude Include="GDT.h" />
     <ClInclude Include="Global.h" />
     <ClInclude Include="IO.h" />

@@ -2,14 +2,27 @@
 // PS/2 keyboard driver
 
 #include "VarDefs.h"
+#include "Global.h"
 #include "VGATextMode.h"
+
+// ---------------------------------------------
+// enums
+// ---------------------------------------------
 
 enum Keys_Keyboard {
 	KEY_LSHIFT = 42,
 	KEY_RSHIFT = 54,
 	KEY_CTRL = 29,
 	KEY_ALT = 59,
+	KEY_ENTER = 0x1c,
 };
+
+
+// ---------------------------------------------
+// constants
+// ---------------------------------------------
+
+#define KEYBOARD_BUFFER_SIZE 32
 
 char ukKeyboardLayout[128] = {
 	0,  0, '1', '2', '3', '4', '5', '6', '7', '8',	/* 9 */
@@ -88,7 +101,24 @@ char ukShiftedKeyboardLayout[128] = {
 	0,	/* All other keys are undefined */
 };
 
+
+// ---------------------------------------------
+// vars
+// ---------------------------------------------
+
 Bool isShiftPressed = false;
+char keyboardBuffer[KEYBOARD_BUFFER_SIZE];
+Index posKeyboardBuffer = 0;
+
+
+// ---------------------------------------------
+// functions
+// ---------------------------------------------
+
+void Keyboard_Init() {
+	posKeyboardBuffer = 0;
+	keyboardBuffer[0] = 0;
+}
 
 void KeyboardIRQ() {
 	Byte key = InByte_IO(0x60);
@@ -106,16 +136,23 @@ void KeyboardIRQ() {
 
 		} else if (key == KEY_CTRL) {
 
-		} else {
-			Byte character;
-			if (isShiftPressed)
-				character = ukShiftedKeyboardLayout[key];
-			else
-				character = ukKeyboardLayout[key];
+		} else if (isKeyboardAcceptingInput) {
+			if (key == KEY_ENTER) {
+				isAcceptCommand = true;
+			} else {
+				Byte character;
+				if (isShiftPressed)
+					character = ukShiftedKeyboardLayout[key];
+				else
+					character = ukKeyboardLayout[key];
 
-			if (character != 0) {
-				PutChar_Terminal_VGA(character);
-				Cursor2CurrentPos_Terminal_VGA();
+				if (character != 0 && posKeyboardBuffer < KEYBOARD_BUFFER_SIZE) {
+					keyboardBuffer[posKeyboardBuffer] = character;
+					posKeyboardBuffer++;
+					keyboardBuffer[posKeyboardBuffer] = 0;
+					PutChar_Terminal_VGA(character);
+					Cursor2CurrentPos_Terminal_VGA();
+				}
 			}
 		}
 	}

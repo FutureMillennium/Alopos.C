@@ -15,3 +15,13 @@ const Uint8 OS_MINOR_VERSION = 1;
 // ---------------------------------------------
 
 inline void HaltExecution();
+
+
+// ---------------------------------------------
+// vars
+// ---------------------------------------------
+
+Bool isKeyboardAcceptingInput;
+volatile Bool isAcceptCommand;
+Byte4 magicNumber_boot;
+MultibootInfo* multibootInfo;

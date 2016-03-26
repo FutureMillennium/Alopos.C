@@ -2,53 +2,11 @@
 // VGA text mode 3
 
 #include "VarDefs.h"
-
-// ---------------------------------------------
-// constants
-// ---------------------------------------------
-
-static const Index COLS_MAX_VGA = 80;
-static const Index ROWS_MAX_VGA = 25;
-
-
-// ---------------------------------------------
-// enums
-// ---------------------------------------------
-
-enum Color_VGA {
-	COLOR_BLACK = 0,
-	COLOR_BLUE = 1,
-	COLOR_GREEN = 2,
-	COLOR_CYAN = 3,
-	COLOR_RED = 4,
-	COLOR_MAGENTA = 5,
-	COLOR_BROWN = 6,
-	COLOR_LIGHT_GREY = 7,
-	COLOR_DARK_GREY = 8,
-	COLOR_LIGHT_BLUE = 9,
-	COLOR_LIGHT_GREEN = 10,
-	COLOR_LIGHT_CYAN = 11,
-	COLOR_LIGHT_RED = 12,
-	COLOR_LIGHT_MAGENTA = 13,
-	COLOR_LIGHT_BROWN = 14,
-	COLOR_WHITE = 15,
-};
-
-
-// ---------------------------------------------
-// vars
-// ---------------------------------------------
-
-Index rowCurrentTerminal_VGA;
-Index colCurrentTerminal_VGA;
-Byte colorCurrentTerminal_VGA;
-volatile Byte2* bufferTerminal_VGA;
-
+#include "VGATextMode.h"
 
 // ---------------------------------------------
 // functions
 // ---------------------------------------------
-
 
 Byte ColorMake_VGA(enum Color_VGA foreground, enum Color_VGA background) {
 	return foreground | background << 4;
@@ -69,6 +27,10 @@ Index Length_String(const char* input) {
 
 void ColorSet_Terminal_VGA(Byte color) {
 	colorCurrentTerminal_VGA = color;
+}
+
+void ColorReset_Terminal_VGA() {
+	ColorSet_Terminal_VGA(ColorMake_VGA(COLOR_LIGHT_GREY, COLOR_BLACK));
 }
 
 void EntryPut_Terminal_VGA(char character, Byte color, Index x, Index y) {

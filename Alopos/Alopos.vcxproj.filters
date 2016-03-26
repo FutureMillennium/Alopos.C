@@ -47,6 +47,9 @@
     <ClCompile Include="PS2Keyboard.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="CommandLine.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Multiboot.h">
@@ -71,6 +74,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="PS2Keyboard.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandLine.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

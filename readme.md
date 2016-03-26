@@ -8,8 +8,13 @@ operating system for x86 (32-bit)
 Current features
 -----------------
 
-- Displays multiboot and memory map info
-- Displays keyboard input on screen
+- Command line (no backspace, case sensitive). Commands:
+	- help
+	- BootInfo
+	- CharsetTest
+	- ColourTest
+	- GDTInfo
+	- VarSizes
 
 Build dependencies
 -------------------

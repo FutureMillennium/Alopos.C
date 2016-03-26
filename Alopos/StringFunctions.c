@@ -1,6 +1,9 @@
 
 // string functions
 
+#include "VarDefs.h"
+
+
 void Number2String(int number, char* buffer, char base) {
 	char *tmpbuffer = buffer;
 	char *p1, *p2;
@@ -38,4 +41,19 @@ void Number2String(int number, char* buffer, char base) {
 		p1++;
 		p2--;
 	}
+}
+
+Bool EqualStrings(const char* string1, const char* string2) {
+	Index i = 0;
+
+	if (string1[i] != string2[i])
+		return false;
+
+	while (string1[i] != 0) {
+		i++;
+		if (string1[i] != string2[i])
+			return false;
+	}
+
+	return true;
 }
