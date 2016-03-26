@@ -8,8 +8,8 @@ operating system for x86 (32-bit)
 Current features
 -----------------
 
-- Runs a charset, VGA terminal colours and variable sizes test
 - Displays multiboot and memory map info
+- Displays keyboard input on screen
 
 Build dependencies
 -------------------

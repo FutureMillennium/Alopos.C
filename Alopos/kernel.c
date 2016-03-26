@@ -20,6 +20,7 @@
 #include "Multiboot.c"
 #include "IO.c"
 #include "VGATextMode.c"
+#include "PS2Keyboard.c"
 
 
 inline void InterruptsEnable() {

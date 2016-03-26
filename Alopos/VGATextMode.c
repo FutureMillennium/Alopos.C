@@ -198,3 +198,7 @@ void GetCursorPosition_Terminal_VGA() {
 	colCurrentTerminal_VGA = pos % COLS_MAX_VGA;
 	rowCurrentTerminal_VGA = pos / COLS_MAX_VGA;
 }
+
+void Cursor2CurrentPos_Terminal_VGA() {
+	CursorSet_Terminal_VGA(rowCurrentTerminal_VGA, colCurrentTerminal_VGA);
+}

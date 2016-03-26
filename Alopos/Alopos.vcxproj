@@ -81,6 +81,7 @@
     <ClCompile Include="kernel.c" />
     <ClCompile Include="Memory.c" />
     <ClCompile Include="Multiboot.c" />
+    <ClCompile Include="PS2Keyboard.c" />
     <ClCompile Include="StringFunctions.c" />
     <ClCompile Include="VGATextMode.c" />
   </ItemGroup>
@@ -90,6 +91,7 @@
     <ClInclude Include="IO.h" />
     <ClInclude Include="Memory.h" />
     <ClInclude Include="Multiboot.h" />
+    <ClInclude Include="PS2Keyboard.h" />
     <ClInclude Include="VarDefs.h" />
     <ClInclude Include="VGATextMode.h" />
   </ItemGroup>

@@ -44,6 +44,9 @@
     <ClCompile Include="Memory.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="PS2Keyboard.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Multiboot.h">
@@ -65,6 +68,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="IO.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PS2Keyboard.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

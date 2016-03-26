@@ -5,6 +5,7 @@
 #include "Memory.h"
 #include "VGATextMode.h"
 #include "IO.h"
+#include "PS2Keyboard.h"
 
 // ---------------------------------------------
 // constants
@@ -221,7 +222,11 @@ void IRQHandler(struct InterruptState* state) {
 		handler(r);
 	}*/
 
-	Echo_Terminal_VGA("Woop, IRQHandler %i (0x%x) happened\n", state->interruptNumber, state->interruptNumber);
+	if (state->interruptNumber == 33) {
+		KeyboardIRQ();
+	} else {
+		Echo_Terminal_VGA("IRQHandler %i (0x%x) happened\n", state->interruptNumber, state->interruptNumber);
+	}
 
 	/* If the IDT entry that was invoked was greater than 40
 	*  (meaning IRQ8 - 15), then we need to send an EOI to
@@ -280,10 +285,10 @@ void IDTInit() {
 
 	// remap IRQ 0–15 from 8–15 to 32–47
 	{
-		Byte a1, a2;
+		/*Byte a1, a2;
 
 		a1 = InByte_IO(PIC1_DATA); // save masks
-		a2 = InByte_IO(PIC2_DATA);
+		a2 = InByte_IO(PIC2_DATA);*/
 
 		// TODO does this need io_wait()?
 		OutByte_IO(PIC1_COMMAND, ICW1_INIT + ICW1_ICW4); // starts the initialization sequence (in cascade mode)
@@ -296,8 +301,10 @@ void IDTInit() {
 		OutByte_IO(PIC1_DATA, ICW4_8086);
 		OutByte_IO(PIC2_DATA, ICW4_8086);
 		
-		OutByte_IO(PIC1_DATA, a1); // restore saved masks.
-		OutByte_IO(PIC2_DATA, a2);
+		//OutByte_IO(PIC1_DATA, a1); // restore saved masks.
+		//OutByte_IO(PIC2_DATA, a2);
+		OutByte_IO(PIC1_DATA, 1); // 0b11111101 only care about IRQ1 at the moment
+		OutByte_IO(PIC2_DATA, 0); // 0xFF
 	}
 
 	// IRQ 0–15 = interrupt 32–47
