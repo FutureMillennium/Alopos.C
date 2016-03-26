@@ -1,6 +1,7 @@
 
 // Global Descriptor Table (GDT)
 
+#include "VarDefs.h"
 #include "GDT.h"
 
 // ---------------------------------------------
@@ -14,20 +15,21 @@ GDT gdt;
 // functions
 // ---------------------------------------------
 
-void SegmentDescriptorSet_GDT(Index index, Byte8 base, Byte4 limit, Bool isReadableWriteable, Bit directionConforming, Bool isExecutable, Uint8 privilegeRing, Bool is32bit, Bit granularity) {
+void SegmentDescriptorSet_GDT(Index index, Byte8 base, Byte4 limit, Bool isReadableWriteable, Bit directionConforming, Bool isExecutable, Uint2 privilegeRing, Bool is32bit, Bit granularity) {
 	Byte access, granularityFlags;
 
 	// access
-	access = 0b10010000; // bit 0, "accessed" is 0
-	if (isReadableWriteable)
-		access |= 0b00000010; // bit 1, readable (code) / writeable (data) bit
-	if (directionConforming == 1)
-		access |= 0b00000100; // bit 2, conforming (code) / direction (data) bit
-	if (isExecutable)
-		access |= 0b00001000; // bit 3
+	access = 0b10010000;
+	// bit 0, "accessed" is 0
 	// bit 4 is 1
-	access |= (privilegeRing << 5); // bit 5, 6, executable = code, non-executable = data
 	// bit 7, "present" must be 1
+	if (isReadableWriteable)
+		access |= (1 << 1); // bit 1, readable (code) / writeable (data) bit
+	if (directionConforming == 1)
+		access |= (1 << 2); // bit 2, conforming (code) / direction (data) bit
+	if (isExecutable)
+		access |= (1 << 3); // bit 3
+	access |= ((privilegeRing & 0b11) << 5); // bit 5, 6, executable = code, non-executable = data
 
 	// granularity flags
 	granularityFlags = 0;

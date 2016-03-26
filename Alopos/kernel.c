@@ -28,13 +28,19 @@ inline void InterruptsEnable() {
 #endif
 }
 
+inline void HaltExecution() {
+#if defined(__GNUC__)
+	asm volatile ("hlt");
+#endif
+}
+
 
 #if defined(__cplusplus)
 extern "C" // Use C linkage for main_kernel.
 #endif
 void Main_Kernel(Byte4 magicNumber, Byte4 multibootInfoAddress) {
 
-	MultibootInfoType* multibootInfo;
+	MultibootInfo* multibootInfo;
 
 	GDTInit();
 	IDTInit(); // interrupts, exceptions and IRQ
@@ -101,7 +107,7 @@ void Main_Kernel(Byte4 magicNumber, Byte4 multibootInfoAddress) {
 		*/
 
 	// Set multibootInfo to the address of the Multiboot information structure.
-	multibootInfo = (MultibootInfoType *)multibootInfoAddress;
+	multibootInfo = (MultibootInfo*)multibootInfoAddress;
 
 	// Print out the flags.
 	Echo_Terminal_VGA("flags = %b, ", (unsigned)multibootInfo->flags);
@@ -125,12 +131,12 @@ void Main_Kernel(Byte4 magicNumber, Byte4 multibootInfoAddress) {
 
 	// Are mods_* valid?
 	if (FlagCheck_MultibootInfo(multibootInfo->flags, 3)) {
-		MultibootModuleType *mod;
+		MultibootModule* mod;
 		unsigned int i;
 
 		Echo_Terminal_VGA("mods_count = %i, mods_addr = 0x%x\n",
 			(int)multibootInfo->mods_count, (int)multibootInfo->mods_addr);
-		for (i = 0, mod = (MultibootModuleType *)multibootInfo->mods_addr;
+		for (i = 0, mod = (MultibootModule*)multibootInfo->mods_addr;
 		i < multibootInfo->mods_count;
 			i++, mod++)
 			Echo_Terminal_VGA(" mod_start = 0x%x, mod_end = 0x%x, cmdline = %s\n",
@@ -147,7 +153,7 @@ void Main_Kernel(Byte4 magicNumber, Byte4 multibootInfoAddress) {
 
 	// Is the symbol table of a.out valid?
 	if (FlagCheck_MultibootInfo(multibootInfo->flags, 4)) {
-		MultibootAoutSymbolTableType *multiboot_aout_sym = &(multibootInfo->u.aout_sym);
+		MultibootAoutSymbolTable* multiboot_aout_sym = &(multibootInfo->u.aout_sym);
 
 		Echo_Terminal_VGA("MultibootAoutSymbolTable: tabsize = 0x%0x, "
 			"strsize = 0x%x, addr = 0x%x\n",
@@ -158,7 +164,7 @@ void Main_Kernel(Byte4 magicNumber, Byte4 multibootInfoAddress) {
 
 	// Is the section header table of ELF valid?
 	if (FlagCheck_MultibootInfo(multibootInfo->flags, 5)) {
-		MultibootELFSymbolTableType *multiboot_elf_sec = &(multibootInfo->u.elf_sec);
+		MultibootELFSymbolTable* multiboot_elf_sec = &(multibootInfo->u.elf_sec);
 
 		Echo_Terminal_VGA("multiboot_elf_sec: num = %u, size = 0x%x,"
 			" addr = 0x%x, shndx = 0x%x\n",
@@ -168,13 +174,13 @@ void Main_Kernel(Byte4 magicNumber, Byte4 multibootInfoAddress) {
 
 	// Are mmap_* valid?
 	if (FlagCheck_MultibootInfo(multibootInfo->flags, 6)) {
-		MultibootMemoryMapEntryType *mmap;
+		MultibootMemoryMapEntry* mmap;
 
 		Echo_Terminal_VGA("mmap_addr = 0x%x, mmap_length = 0x%x\n", (unsigned)multibootInfo->mmap_addr, (unsigned)multibootInfo->mmap_length);
 
-		for (mmap = (MultibootMemoryMapEntryType *)multibootInfo->mmap_addr;
+		for (mmap = (MultibootMemoryMapEntry*) multibootInfo->mmap_addr;
 		(unsigned long)mmap < multibootInfo->mmap_addr + multibootInfo->mmap_length;
-			mmap = (MultibootMemoryMapEntryType *)((unsigned long)mmap
+			mmap = (MultibootMemoryMapEntry*)((unsigned long)mmap
 				+ mmap->size + sizeof(mmap->size)))
 			Echo_Terminal_VGA("size = 0x%x, base_addr = 0x%x%x,"
 				" length = 0x%x%x, type = 0x%x\n",
@@ -193,6 +199,8 @@ void Main_Kernel(Byte4 magicNumber, Byte4 multibootInfoAddress) {
 
 	CursorSet_Terminal_VGA(rowCurrentTerminal_VGA, colCurrentTerminal_VGA);
 
-	for (;;);
+kernelLoop:
+	HaltExecution();
+	goto kernelLoop;
 
 }

@@ -1,5 +1,3 @@
 #pragma once
 
-#include "VarDefs.h"
-
-Byte* MemorySet(Byte* destination, Byte setTo, Index count);
+Byte* MemorySet(Byte* offset, Byte setTo, Index count);

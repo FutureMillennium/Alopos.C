@@ -1,7 +1,7 @@
 #pragma once
 // Global Descriptor Table (GDT)
 
-#include "VarDefs.h"
+
 
 // ---------------------------------------------
 // structs
@@ -22,7 +22,7 @@ typedef struct { // 8 bytes, GDT entry
 } __attribute__((packed)) GDTSegmentDescriptor;
 
 typedef struct {
-	GDTSegmentDescriptor entries[3];
+	GDTSegmentDescriptor entries[3]; // TODO variable number of entries
 	GDTAddress address;
 } GDT;
 
@@ -31,5 +31,5 @@ typedef struct {
 // function definitions
 // ---------------------------------------------
 
-extern void GDTFlush(Byte4);
+extern void GDTFlush(Byte4); // Load and flush the GDT
 

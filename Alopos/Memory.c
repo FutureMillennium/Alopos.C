@@ -3,12 +3,12 @@
 
 #include "VarDefs.h"
 
-Byte* MemorySet(Byte* destination, Byte setTo, Index count) {
-	Byte* current = destination;
+Byte* MemorySet(Byte* offset, Byte setTo, Index count) {
+	Byte* current = offset;
 	while (count != 0) {
 		*current = setTo;
 		current++;
 		count--;
 	}
-	return destination;
+	return offset;
 }

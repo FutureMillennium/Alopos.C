@@ -26,6 +26,7 @@ typedef __UINT8_TYPE__ Uint8;
 typedef __UINT8_TYPE__ Byte;
 typedef __UINT8_TYPE__ Bit;
 typedef __UINT8_TYPE__ Bit2;
+typedef __UINT8_TYPE__ Uint2;
 typedef __UINT8_TYPE__ Bit4;
 
 typedef __UINT16_TYPE__ Uint16;
@@ -44,6 +45,7 @@ typedef unsigned __int8 Uint8;
 typedef unsigned __int8 Byte;
 typedef unsigned __int8 Bit;
 typedef unsigned __int8 Bit2;
+typedef unsigned __int8 Uint2;
 typedef unsigned __int8 Bit4;
 
 typedef unsigned __int16 Uint16;
