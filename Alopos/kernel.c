@@ -186,12 +186,13 @@ void Main_Kernel(Byte4 magicNumber, Byte4 multibootInfoAddress) {
 				(unsigned)mmap->type);
 	}
 
-
 	// GDT data test
 	/*for (Byte i = 0; i < 3; i++) {
 		Echo_Terminal_VGA("%i: gran %b %x, access %b %x\n", i, gdt.entries[i].granularity, gdt.entries[i].granularity, gdt.entries[i].access, gdt.entries[i].access);
 	}*/
 
 	CursorSet_Terminal_VGA(rowCurrentTerminal_VGA, colCurrentTerminal_VGA);
+
+	for (;;);
 
 }

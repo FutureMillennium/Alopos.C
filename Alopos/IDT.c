@@ -33,27 +33,27 @@
 
 char* exceptionMessages[] =
 {
-	"Division By Zero",
-	"Debug",
-	"Non Maskable Interrupt",
-	"Breakpoint",
-	"Into Detected Overflow",
-	"Out of Bounds",
-	"Invalid Opcode",
-	"No Coprocessor",
+	"Division By Zero", // 0
+	"Debug", // 1
+	"Non Maskable Interrupt", // 2
+	"Breakpoint", // 3
+	"Into Detected Overflow", // 4
+	"Out of Bounds", // 5
+	"Invalid Opcode", // 6
+	"No Coprocessor", // 7
 
-	"Double Fault",
-	"Coprocessor Segment Overrun",
-	"Bad TSS",
-	"Segment Not Present",
-	"Stack Fault",
-	"General Protection Fault",
-	"Page Fault",
-	"Unknown Interrupt",
+	"Double Fault", // 8
+	"Coprocessor Segment Overrun", // 9
+	"Bad TSS", // 10
+	"Segment Not Present", // 11
+	"Stack Fault", // 12
+	"General Protection Fault", // 13
+	"Page Fault", // 14
+	"Unknown Interrupt", // 15
 
-	"Coprocessor Fault",
-	"Alignment Check",
-	"Machine Check",
+	"Coprocessor Fault", // 16
+	"Alignment Check", // 17
+	"Machine Check", // 18
 	"Reserved",
 	"Reserved",
 	"Reserved",
@@ -106,10 +106,10 @@ typedef struct IDT {
 } IDT;
 
 typedef struct InterruptState {
-	unsigned int gs, fs, es, ds;
-	unsigned int edi, esi, ebp, esp, ebx, edx, ecx, eax;
-	unsigned int interruptNumber, errorCode;
-	unsigned int eip, cs, eflags, useresp, ss;
+	Byte4 gs, fs, es, ds; // pushed the segs last
+	Byte4 edi, esi, ebp, esp, ebx, edx, ecx, eax; // pushed by 'pusha'
+	Uint32 interruptNumber, errorCode; // our 'push byte #' and ecodes do this
+	Byte4 eip, cs, eflags, useresp, ss; // pushed by the processor automatically
 } InterruptState;
 
 
@@ -196,16 +196,17 @@ void GateEntrySet_IDT(Index index, Byte4 offset, Byte2 selector, enum IDTGate_Ty
 
 }
 
-void ExceptionHandler(InterruptState* state) {
-	Echo_Terminal_VGA("Woop, ExceptionHandler happened\n");
+void ExceptionHandler(struct InterruptState* state) {
 
 	if (state->interruptNumber < 32) {
-		Echo_Terminal_VGA("%s exception: %i\n", exceptionMessages[state->interruptNumber], state->errorCode);
+		Echo_Terminal_VGA("%s exception: %i %x\n", exceptionMessages[state->interruptNumber], state->errorCode, state->errorCode);
+	} else {
+		Echo_Terminal_VGA("Unknown exception!\n");
 	}
-	return;
+	for (;;); // TODO wat do?
 }
 
-void IRQHandler(InterruptState* state) {
+void IRQHandler(struct InterruptState* state) {
 	/* This is a blank function pointer */
 	//void(*handler)(struct regs *r);
 
@@ -216,7 +217,7 @@ void IRQHandler(InterruptState* state) {
 		handler(r);
 	}*/
 
-	Echo_Terminal_VGA("Woop, IRQHandler happened\n");
+	Echo_Terminal_VGA("Woop, IRQHandler %i (0x%x) happened\n", state->interruptNumber, state->interruptNumber);
 
 	/* If the IDT entry that was invoked was greater than 40
 	*  (meaning IRQ8 - 15), then we need to send an EOI to
@@ -291,7 +292,7 @@ void IDTInit() {
 		OutByte_IO(PIC1_DATA, ICW4_8086);
 		OutByte_IO(PIC2_DATA, ICW4_8086);
 		
-		OutByte_IO(PIC1_DATA, a1);   // restore saved masks.
+		OutByte_IO(PIC1_DATA, a1); // restore saved masks.
 		OutByte_IO(PIC2_DATA, a2);
 	}
 
@@ -313,6 +314,6 @@ void IDTInit() {
 	GateEntrySet_IDT(45, (Byte4)IRQHandler13, 0x08, IDT_GATE_TYPE_INTERRUPT_GATE_32, 0, 0);
 	GateEntrySet_IDT(46, (Byte4)IRQHandler14, 0x08, IDT_GATE_TYPE_INTERRUPT_GATE_32, 0, 0);
 	GateEntrySet_IDT(47, (Byte4)IRQHandler15, 0x08, IDT_GATE_TYPE_INTERRUPT_GATE_32, 0, 0);
-
+	
 	IDTLoad((Byte4)&idt.address);
 }
