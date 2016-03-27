@@ -154,22 +154,26 @@ void CommandTryAccept() {
 	isKeyboardAcceptingInput = false;
 	isAcceptCommand = false;
 	// TODO cursor disable
-	PutChar_Terminal_VGA('\n');
+	
+	if (keyboardBuffer[0] != 0) {
+		ToLower_String(keyboardBuffer);
+		PutChar_Terminal_VGA('\n');
 
-	if (EqualStrings(keyboardBuffer, "help")) {
-		Help();
-	}  else if (EqualStrings(keyboardBuffer, "GDTInfo")) {
-		GDTInfo();
-	} else if (EqualStrings(keyboardBuffer, "BootInfo")) {
-		BootInfo();
-	} else if (EqualStrings(keyboardBuffer, "VarSizes")) {
-		VarSizes();
-	} else if (EqualStrings(keyboardBuffer, "ColourTest")) {
-		ColourTest();
-	} else if (EqualStrings(keyboardBuffer, "CharsetTest")) {
-		CharsetTest();
-	} else {
-		Echo_Terminal_VGA("Invalid command. Type 'help' for a list of commands.");
+		if (EqualStrings(keyboardBuffer, "help")) {
+			Help();
+		} else if (EqualStrings(keyboardBuffer, "gdtinfo")) {
+			GDTInfo();
+		} else if (EqualStrings(keyboardBuffer, "bootinfo")) {
+			BootInfo();
+		} else if (EqualStrings(keyboardBuffer, "varsizes")) {
+			VarSizes();
+		} else if (EqualStrings(keyboardBuffer, "colourtest")) {
+			ColourTest();
+		} else if (EqualStrings(keyboardBuffer, "charsettest")) {
+			CharsetTest();
+		} else {
+			Echo_Terminal_VGA("Invalid command. Type 'help' for a list of commands.");
+		}
 	}
 
 	keyboardBuffer[0] = 0;

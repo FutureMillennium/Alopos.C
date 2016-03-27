@@ -15,6 +15,7 @@ enum Keys_Keyboard {
 	KEY_CTRL = 29,
 	KEY_ALT = 59,
 	KEY_ENTER = 0x1c,
+	KEY_BACKSPACE = 0x0E,
 };
 
 
@@ -139,6 +140,11 @@ void KeyboardIRQ() {
 		} else if (isKeyboardAcceptingInput) {
 			if (key == KEY_ENTER) {
 				isAcceptCommand = true;
+			}  else if (key == KEY_BACKSPACE && posKeyboardBuffer > 0) {
+				posKeyboardBuffer--;
+				keyboardBuffer[posKeyboardBuffer] = 0;
+				Backspace_Terminal_VGA();
+				Cursor2CurrentPos_Terminal_VGA();
 			} else {
 				Byte character;
 				if (isShiftPressed)

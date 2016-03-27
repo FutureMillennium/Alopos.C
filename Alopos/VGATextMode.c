@@ -51,6 +51,11 @@ void NewLine_Terminal_VGA() {
 	}
 }
 
+void Backspace_Terminal_VGA() {
+	colCurrentTerminal_VGA--;
+	EntryPut_Terminal_VGA(0, colorCurrentTerminal_VGA, colCurrentTerminal_VGA, rowCurrentTerminal_VGA);
+}
+
 void PutChar_Terminal_VGA(char character) {
 	if (character == '\n') {
 		NewLine_Terminal_VGA();

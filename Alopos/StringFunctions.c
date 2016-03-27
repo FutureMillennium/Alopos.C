@@ -57,3 +57,13 @@ Bool EqualStrings(const char* string1, const char* string2) {
 
 	return true;
 }
+
+void ToLower_String(char* target) {
+	char* tmp = target;
+	while (*tmp != 0) {
+		if (*tmp >= 'A' && *tmp <= 'Z')
+			*tmp -= ('A' - 'a');
+		tmp++;
+	}
+	return;
+}
