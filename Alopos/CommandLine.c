@@ -144,6 +144,7 @@ void BootInfo() {
 }
 
 void CommandInput() {
+	ColorSet_Terminal_VGA(ColorMake_VGA(COLOR_LIGHT_BLUE, COLOR_BLACK));
 	Echo_Terminal_VGA("\n>");
 	// TODO cursor enable
 	Cursor2CurrentPos_Terminal_VGA();
@@ -156,6 +157,7 @@ void CommandTryAccept() {
 	// TODO cursor disable
 	
 	if (keyboardBuffer[0] != 0) {
+		ColorReset_Terminal_VGA();
 		ToLower_String(keyboardBuffer);
 		PutChar_Terminal_VGA('\n');
 

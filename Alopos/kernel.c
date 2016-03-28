@@ -56,7 +56,7 @@ void Main_Kernel(Byte4 magicNumber, Byte4 multibootInfoAddress) {
 	GetCursorPosition_Terminal_VGA();
 	
 	ColorSet_Terminal_VGA(ColorMake_VGA(COLOR_WHITE, COLOR_BLACK));
-	Echo_Terminal_VGA("\n%s v%i.%i\n", OS_NAME, OS_MAJOR_VERSION, OS_MINOR_VERSION);
+	Echo_Terminal_VGA("\n%s %i.%i\n", OS_NAME, OS_MAJOR_VERSION, OS_MINOR_VERSION);
 
 	ColorReset_Terminal_VGA();
 

@@ -4,6 +4,13 @@
 #include "VarDefs.h"
 
 
+Index Length_String(const char* input) {
+	Index length = 0;
+	while (input[length] != 0)
+		length++;
+	return length;
+}
+
 void Number2String(int number, char* buffer, char base) {
 	char *tmpbuffer = buffer;
 	char *p1, *p2;

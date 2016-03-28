@@ -18,13 +18,6 @@ Byte2 EntryMake_VGA(char character, Byte color) {
 	return c16 | color16 << 8;
 }
 
-Index Length_String(const char* input) {
-	Index length = 0;
-	while (input[length] != 0)
-		length++;
-	return length;
-}
-
 void ColorSet_Terminal_VGA(Byte color) {
 	colorCurrentTerminal_VGA = color;
 }

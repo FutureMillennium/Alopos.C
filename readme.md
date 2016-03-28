@@ -8,7 +8,7 @@ operating system for x86 (32-bit)
 Current features
 -----------------
 
-- Command line (no backspace, case sensitive). Commands:
+- Command line (case insensitive). Commands:
 	- help
 	- BootInfo
 	- CharsetTest

@@ -37,6 +37,9 @@ enum Color_VGA {
 // function definitions
 // ---------------------------------------------
 
+Byte ColorMake_VGA(enum Color_VGA foreground, enum Color_VGA background);
+void ColorSet_Terminal_VGA(Byte color);
+void ColorReset_Terminal_VGA();
 void Backspace_Terminal_VGA();
 void PutChar_Terminal_VGA(char character);
 void Echo_Terminal_VGA(const char* text, ...);
