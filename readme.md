@@ -8,8 +8,13 @@ operating system for x86 (32-bit)
 Current features
 -----------------
 
-- Runs a charset, VGA terminal colours and variable sizes test
-- Displays multiboot and memory map info
+- Command line (case insensitive). Commands:
+	- help
+	- BootInfo
+	- CharsetTest
+	- ColourTest
+	- GDTInfo
+	- VarSizes
 
 Build dependencies
 -------------------

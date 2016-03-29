@@ -13,24 +13,22 @@ static const Byte4 MULTIBOOT_BOOTLOADER_MAGIC = 0x2BADB002; // Multiboot bootloa
 // ---------------------------------------------
 
 // flag bit 4
-struct MultibootAoutSymbolTable {
+typedef struct MultibootAoutSymbolTable {
 	Byte4 tabsize;
 	Byte4 strsize;
 	Byte4 addr;
 	Byte4 reserved;
-};
-typedef struct MultibootAoutSymbolTable MultibootAoutSymbolTableType;
+} MultibootAoutSymbolTable;
 
 // flag bit 5
-struct MultibootELFSymbolTable {
+typedef struct MultibootELFSymbolTable {
 	Byte4 num;
 	Byte4 size;
 	Byte4 addr;
 	Byte4 shndx;
-};
-typedef struct MultibootELFSymbolTable MultibootELFSymbolTableType;
+} MultibootELFSymbolTable;
 
-struct MultibootInfo {
+typedef struct MultibootInfo {
 	/* Multiboot info version number */
 	Byte4 flags; // 11 bits of flags
 
@@ -78,11 +76,10 @@ struct MultibootInfo {
 	Byte2 vbe_interface_seg;
 	Byte2 vbe_interface_off;
 	Byte2 vbe_interface_len;
-};
-typedef struct MultibootInfo MultibootInfoType;
+} MultibootInfo;
 
 // flag bit 3 – Boot-Module list
-struct MultibootModule {
+typedef struct MultibootModule {
 	/* the memory used goes from bytes 'mod_start' to 'mod_end-1' inclusive */
 	Byte4 mod_start;
 	Byte4 mod_end;
@@ -92,14 +89,12 @@ struct MultibootModule {
 
 	/* padding to take it to 16 bytes (must be zero) */
 	Byte4 pad;
-};
-typedef struct MultibootModule MultibootModuleType;
+} MultibootModule;
 
 // flag bit 6 – Memory Mapping
-struct MultibootMemoryMapEntry {
+typedef struct MultibootMemoryMapEntry {
 	Byte4 size;
 	Byte8 base_addr;
 	Byte8 length;
 	Byte4 type; // 1 = available, 2 = reserved
-} __attribute__((packed));
-typedef struct MultibootMemoryMapEntry MultibootMemoryMapEntryType;
+} __attribute__((packed)) MultibootMemoryMapEntry;

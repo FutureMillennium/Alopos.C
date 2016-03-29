@@ -41,6 +41,15 @@
     <ClCompile Include="IDT.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Memory.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PS2Keyboard.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CommandLine.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Multiboot.h">
@@ -53,6 +62,21 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GDT.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Memory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VGATextMode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IO.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PS2Keyboard.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandLine.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
