@@ -37,10 +37,9 @@ _start:
 	call Main_Kernel
 
 	# In case the function returns
+.Lhang: # @TODO kernel panic
 	cli  # clear interrupt
-	# TODO kernel panic
 	hlt  # halt
-.Lhang:
 	jmp .Lhang
 
 # Set the size of the _start symbol to the current location '.' minus its start.
